@@ -15,7 +15,7 @@ have_cmd() {
 }
 
 timestamp() {
-  date +"%Y%m%d_%H%M%S"
+  date -d"$1" +"%Y%m%d_%H%M%S"
 }
 
 # 1) Check prerequisite: adb exists
@@ -32,7 +32,8 @@ fi
 SERIAL="$(adb devices | awk 'NR>1 && $2=="device" {print $1; exit}')"
 
 # 3) Create output directory
-OUTDIR="report_$(timestamp)"
+DATE="$(date)"
+OUTDIR="report_$(timestamp "$DATE")"
 mkdir -p "$OUTDIR"
 
 echo "Using device: $SERIAL"
@@ -73,7 +74,7 @@ PROC_LINES="$(wc -l < "$OUTDIR/ps.txt" 2>/dev/null || echo 0)"
 {
   echo "Android Health Check Summary"
   echo "============================"
-  echo "Timestamp     : $(date)"
+  echo "Timestamp     : $DATE"
   echo "Device serial : $SERIAL"
   echo
   echo "[Device]"
