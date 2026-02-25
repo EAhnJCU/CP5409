@@ -61,9 +61,9 @@ adb -s "$SERIAL" logcat -d > "$OUTDIR/logcat.txt" 2>/dev/null || true
 # 5) Build a readable summary
 SUMMARY="$OUTDIR/summary.txt"
 
-MODEL="$(grep -m1 "ro.product.model" "$OUTDIR/getprop.txt" | cut -d'[' -f2 | cut -d']' -f1 || true)"
-ANDROID_VER="$(grep -m1 "ro.build.version.release" "$OUTDIR/getprop.txt" | cut -d'[' -f2 | cut -d']' -f1 || true)"
-SDK_VER="$(grep -m1 "ro.build.version.sdk" "$OUTDIR/getprop.txt" | cut -d'[' -f2 | cut -d']' -f1 || true)"
+MODEL="$(grep -m1 "ro.product.model" "$OUTDIR/getprop.txt" | cut -d'[' -f3 | cut -d']' -f1 || true)"
+ANDROID_VER="$(grep -m1 "ro.build.version.release" "$OUTDIR/getprop.txt" | cut -d'[' -f3 | cut -d']' -f1 || true)"
+SDK_VER="$(grep -m1 "ro.build.version.sdk" "$OUTDIR/getprop.txt" | cut -d'[' -f3 | cut -d']' -f1 || true)"
 
 BAT_LEVEL="$(grep -m1 "level" "$OUTDIR/battery.txt" | awk -F': ' '{print $2}' || true)"
 BAT_STATUS="$(grep -m1 "status" "$OUTDIR/battery.txt" | awk -F': ' '{print $2}' || true)"
