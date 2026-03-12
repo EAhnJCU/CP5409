@@ -15,7 +15,7 @@ have_cmd() {
 }
 
 timestamp() {
-  date +"%Y%m%d_%H%M%S"
+  date -d"$1" +"%Y%m%d_%H%M%S"
 }
 
 # 1) Check prerequisite: adb exists
@@ -32,7 +32,8 @@ fi
 SERIAL="$(adb devices | awk 'NR>1 && $2=="device" {print $1; exit}')"
 
 # 3) Create output directory
-OUTDIR="report_$(timestamp)"
+DATE="$(date)"
+OUTDIR="report_$(timestamp "$DATE")"
 mkdir -p "$OUTDIR"
 
 echo "Using device: $SERIAL"
@@ -60,9 +61,9 @@ adb -s "$SERIAL" logcat -d > "$OUTDIR/logcat.txt" 2>/dev/null || true
 # 5) Build a readable summary
 SUMMARY="$OUTDIR/summary.txt"
 
-MODEL="$(grep -m1 "ro.product.model" "$OUTDIR/getprop.txt" | cut -d'[' -f2 | cut -d']' -f1 || true)"
-ANDROID_VER="$(grep -m1 "ro.build.version.release" "$OUTDIR/getprop.txt" | cut -d'[' -f2 | cut -d']' -f1 || true)"
-SDK_VER="$(grep -m1 "ro.build.version.sdk" "$OUTDIR/getprop.txt" | cut -d'[' -f2 | cut -d']' -f1 || true)"
+MODEL="$(grep -m1 "ro.product.model" "$OUTDIR/getprop.txt" | cut -d'[' -f3 | cut -d']' -f1 || true)"
+ANDROID_VER="$(grep -m1 "ro.build.version.release" "$OUTDIR/getprop.txt" | cut -d'[' -f3 | cut -d']' -f1 || true)"
+SDK_VER="$(grep -m1 "ro.build.version.sdk" "$OUTDIR/getprop.txt" | cut -d'[' -f3 | cut -d']' -f1 || true)"
 
 BAT_LEVEL="$(grep -m1 "level" "$OUTDIR/battery.txt" | awk -F': ' '{print $2}' || true)"
 BAT_STATUS="$(grep -m1 "status" "$OUTDIR/battery.txt" | awk -F': ' '{print $2}' || true)"
@@ -73,7 +74,7 @@ PROC_LINES="$(wc -l < "$OUTDIR/ps.txt" 2>/dev/null || echo 0)"
 {
   echo "Android Health Check Summary"
   echo "============================"
-  echo "Timestamp     : $(date)"
+  echo "Timestamp     : $DATE"
   echo "Device serial : $SERIAL"
   echo
   echo "[Device]"
